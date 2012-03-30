@@ -1,0 +1,221 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>de.akquinet.jbosscc</groupId>
+	<artifactId>jbosscc-testdatabuilder-jpa</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<needle.version>2.1</needle.version>
+
+		<hsql.version>2.2.8</hsql.version>
+
+		<hibernate.version>4.0.0.CR2</hibernate.version>
+		<hibernate.validator.version>4.2.0.Final</hibernate.validator.version>
+
+		<slf4j.version>1.6.1</slf4j.version>
+		<jboss-javaee6-spec.version>1.0.0.Final</jboss-javaee6-spec.version>
+
+		<!-- For tests -->
+		<junit.version>4.8.1</junit.version>
+		<easymock.version>3.0</easymock.version>
+		<hamcrest.version>1.2</hamcrest.version>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+
+					<configuration>
+						<compilerArgument>-proc:none</compilerArgument>
+					</configuration>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>target/generated-sources/metamodel</source>
+							</sources>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>add-test-source</id>
+						<phase>generate-test-sources</phase>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>target/generated-sources/testdatabuilder</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.bsc.maven</groupId>
+				<artifactId>maven-processor-plugin</artifactId>
+				
+				<executions>
+					<execution>
+						<id>process-hibernate-metamodel</id>
+
+						<goals>
+							<goal>process</goal>
+						</goals>
+
+						<phase>generate-sources</phase>
+
+						<configuration>
+							<defaultOutputDirectory>
+								${project.build.directory}/generated-sources/metamodel
+							</defaultOutputDirectory>
+
+							<processors>
+								<!-- list of processors to use -->
+								<processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
+							</processors>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>process-testdatabuilder</id>
+
+						<goals>
+							<goal>process</goal>
+						</goals>
+
+						<phase>generate-sources</phase>
+
+						<configuration>
+							<defaultOutputDirectory>
+								${project.build.directory}/generated-sources/testdatabuilder
+							</defaultOutputDirectory>
+
+							<processors>
+								<!-- list of processors to use -->
+								<processor>net.karneim.pojobuilder.AnnotationProcessor</processor>
+							</processors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>de.mkarnheim</groupId>
+			<artifactId>pojobuilder</artifactId>
+			<version>1.2.1</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/pojobuilder-1.2.1.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr</artifactId>
+			<version>3.3</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>ST4</artifactId>
+			<version>4.0.4</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-jpamodelgen</artifactId>
+			<version>1.1.1.Final</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${hibernate.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>${hsql.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>${hibernate.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>${easymock.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit-dep</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
+			<version>1.3.RC2</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-core</artifactId>
+			<version>1.3.RC2</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>de.akquinet.jbosscc</groupId>
+			<artifactId>jbosscc-needle</artifactId>
+			<scope>test</scope>
+			<version>${needle.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>1.6.4</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>
